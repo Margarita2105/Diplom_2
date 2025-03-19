@@ -5,10 +5,14 @@ import allure
 class ApiMethodsOrder:
 
     @staticmethod
-    @allure.step('Создаем новый заказ авторизованным пользователем.')
-    def order_new(email_user, password_user, ingredients):
+    @allure.step('Авторизуемся, получаем токен.')
+    def user_login(email_user, password_user):
         response = requests.post(curl.login_user_api, json={"email": email_user, "password": password_user})
-        token = response.json()['accessToken']
+        return  response.json()['accessToken']
+
+    @staticmethod
+    @allure.step('Создаем новый заказ авторизованным пользователем.')
+    def order_new(token, ingredients):
         return requests.post(curl.orders_api, json={"ingredients": ingredients}, headers={'Authorization': token})
 
     @staticmethod
